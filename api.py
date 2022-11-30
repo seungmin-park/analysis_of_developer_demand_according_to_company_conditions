@@ -79,3 +79,6 @@ for i in range(0,len(file_list_csv)):
         file = file_list_csv[i]
         df= pd.read_csv(file,encoding='utf-8')
         df_all = pd.concat([df_all, df])
+
+df_all
+df_all.to_csv("20221130.csv",mode='w',encoding='utf-8')
