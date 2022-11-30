@@ -1,6 +1,7 @@
+import os
 import requests
-from bs4 import BeautifulSoup
 import pandas as pd
+from bs4 import BeautifulSoup
 
 # url 잘게 자르기
 url = "http://openapi.work.go.kr/opi/opi/opia/wantedApi.do"
@@ -10,6 +11,7 @@ Return = "&returnType=XML"
 empTpGb = "&empTpGb=1"
 Display = "&display=100"
 occupation = "&occupation=022|023|024|025|026"
+
 
 # 항목 parsing 함수작성하기
 def parse():
@@ -52,33 +54,33 @@ def parse():
 
 
 # parsing 하기
-for pageNum in range (1, 1000):
-  StartPage = "&startPage=" + str(pageNum)
-  result = requests.get(url + serviceKey + Calltp + Return + StartPage + occupation + empTpGb + Display)
-  soup = BeautifulSoup(result.text, 'lxml-xml')
-  wanteds = soup.find_all("wanted")
+for pageNum in range(1, 1000):
+    StartPage = "&startPage=" + str(pageNum)
+    result = requests.get(url + serviceKey + Calltp + Return + StartPage + occupation + empTpGb + Display)
+    soup = BeautifulSoup(result.text, 'lxml-xml')
+    wanteds = soup.find_all("wanted")
 
-  row = []
-  for wanted in wanteds:
-      row.append(parse())
+    row = []
+    for wanted in wanteds:
+        row.append(parse())
 
-  # pandas 데이터프레임에 넣기
-  df = pd.DataFrame(row)
+    # pandas 데이터프레임에 넣기
+    df = pd.DataFrame(row)
 
-  df.to_csv( str(pageNum)+".csv", mode='w', encoding='utf-8')
+    df.to_csv(str(pageNum) + ".csv", mode='w', encoding='utf-8')
 
 path = "./"
 file_list = os.listdir(path)
 file_list_csv = [file for file in file_list if file.endswith(".csv")]
 
-print ("file_list_csv: {}".format(file_list_csv))
+print("file_list_csv: {}".format(file_list_csv))
 
 df_all = pd.DataFrame()
-for i in range(0,len(file_list_csv)):
+for i in range(0, len(file_list_csv)):
     if file_list_csv[i].split('.')[1] == 'csv':
         file = file_list_csv[i]
-        df= pd.read_csv(file,encoding='utf-8')
+        df = pd.read_csv(file, encoding='utf-8')
         df_all = pd.concat([df_all, df])
 
 df_all
-df_all.to_csv("20221130.csv",mode='w',encoding='utf-8')
+df_all.to_csv("20221130.csv", mode='w', encoding='utf-8')
