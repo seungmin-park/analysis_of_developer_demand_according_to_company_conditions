@@ -66,3 +66,16 @@ for pageNum in range (1, 1000):
   df = pd.DataFrame(row)
 
   df.to_csv( str(pageNum)+".csv", mode='w', encoding='utf-8')
+
+path = "./"
+file_list = os.listdir(path)
+file_list_csv = [file for file in file_list if file.endswith(".csv")]
+
+print ("file_list_csv: {}".format(file_list_csv))
+
+df_all = pd.DataFrame()
+for i in range(0,len(file_list_csv)):
+    if file_list_csv[i].split('.')[1] == 'csv':
+        file = file_list_csv[i]
+        df= pd.read_csv(file,encoding='utf-8')
+        df_all = pd.concat([df_all, df])
