@@ -82,5 +82,54 @@ for i in range(0, len(file_list_csv)):
         df = pd.read_csv(file, encoding='utf-8')
         df_all = pd.concat([df_all, df])
 
-df_all
 df_all.to_csv("20221130.csv", mode='w', encoding='utf-8')
+
+import pandas as pd
+
+df_all = pd.read_csv("/content/20221130.csv")
+df_all.sort_values('등록일자')
+
+
+def convertMonthCost(x):
+    if x.__contains__("~"):
+        return rangeCost(x)
+    else:
+        return convertFixMonthCost(x)
+
+
+def rangeCost(x):
+    x = x.replace('만원', '')
+    x = x.replace(' ', '')
+
+    costs = x.split('~')
+
+    minMonthCost = costs[0]
+    maxMonthCost = costs[1]
+    minYearCost = int(minMonthCost) * 12
+    maxYearCost = int(maxMonthCost) * 12
+
+    yearCost = str(int((minYearCost + maxYearCost) / 2)) + "만원"
+    return yearCost
+
+
+def convertFixMonthCost(x):
+    x = x.replace('만원', '')
+    yearCost = str(int(x) * 12) + "만원"
+    return yearCost
+
+
+def temp(x):
+    x = x.replace('만원', '')
+    x = x.replace(' ', '')
+    split = x.split('~')
+
+    return str(int(int(split[0]) + int(split[1]) / 2)) + '만원'
+
+
+df_year_cost = df_all[df_all.임금형태 == '연봉']
+df_year_cost.급여 = df_year_cost.급여.apply(lambda x: temp(x) if x.__contains__('~') else x)
+df_month_cost = df_all[df_all.임금형태 == '월급']
+df_month_cost.급여 = df_month_cost.급여.apply(convertMonthCost)
+df_all = pd.concat((df_year_cost, df_month_cost), sort=False)
+
+df_all.drop(['Unnamed: 0', 'Unnamed: 0.1', '임금형태'], axis=1, inplace=True)
