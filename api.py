@@ -49,3 +49,20 @@ def parse():
             "직종코드": None,
             "우대조건": None
         }
+
+
+# parsing 하기
+for pageNum in range (1, 1000):
+  StartPage = "&startPage=" + str(pageNum)
+  result = requests.get(url + serviceKey + Calltp + Return + StartPage + occupation + empTpGb + Display)
+  soup = BeautifulSoup(result.text, 'lxml-xml')
+  wanteds = soup.find_all("wanted")
+
+  row = []
+  for wanted in wanteds:
+      row.append(parse())
+
+  # pandas 데이터프레임에 넣기
+  df = pd.DataFrame(row)
+
+  df.to_csv( str(pageNum)+".csv", mode='w', encoding='utf-8')
