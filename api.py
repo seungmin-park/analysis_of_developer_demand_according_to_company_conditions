@@ -1,4 +1,6 @@
 import os
+
+import numpy as np
 import requests
 import pandas as pd
 from bs4 import BeautifulSoup
@@ -133,3 +135,10 @@ df_month_cost.급여 = df_month_cost.급여.apply(convertMonthCost)
 df_all = pd.concat((df_year_cost, df_month_cost), sort=False)
 
 df_all.drop(['Unnamed: 0', 'Unnamed: 0.1', '임금형태'], axis=1, inplace=True)
+
+workCode = pd.read_csv('/content/직종코드.csv')
+workCode = workCode.replace(r'^\s*$', np.nan, regex=True)
+workCode.dropna(thresh = 2, inplace=True)
+workCode.fillna(method='ffill', inplace=True)
+
+workCode.to_csv("new_직종코드.csv", mode='w', encoding='utf-8')
