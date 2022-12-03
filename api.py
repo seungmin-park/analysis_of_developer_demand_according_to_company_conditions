@@ -3,6 +3,7 @@ import os
 import numpy as np
 import requests
 import pandas as pd
+import matplotlib.pyplot as plt
 from bs4 import BeautifulSoup
 
 # url 잘게 자르기
@@ -151,3 +152,11 @@ workCode.to_csv("new_직종코드.csv", mode='w', encoding='utf-8')
 
 # 채용 공고와 직종코드 정보 합치기
 merged = pd.merge(left=df_all, right=workCode, how='inner', on='직종코드')
+
+ITCount = merged[merged['대분류'] == '연구/IT'].대분류.count()
+NoneITCount = merged[merged['대분류'] != '연구/IT'].대분류.count()
+
+ratio = [ITCount, NoneITCount]
+labels = ['IT 직군', '비 IT직군']
+plt.pie(ratio, labels=labels, autopct='%.1f%%', colors=['red', 'green'])
+plt.show()
