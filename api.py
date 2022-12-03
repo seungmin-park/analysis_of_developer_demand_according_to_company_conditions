@@ -3,6 +3,8 @@ import os
 import numpy as np
 import requests
 import pandas as pd
+import folium
+import json
 import matplotlib.pyplot as plt
 from bs4 import BeautifulSoup
 
@@ -415,3 +417,21 @@ IT_df.근무지역 = IT_df.근무지역.apply(lambda x: '성동구' if '성동�
 IT_df.근무지역 = IT_df.근무지역.apply(lambda x: '용산구' if '용산구' in x else x)
 IT_df.근무지역 = IT_df.근무지역.apply(lambda x: '중구' if '중구' in x else x)
 IT_df.근무지역 = IT_df.근무지역.apply(lambda x: '종로구' if '종로구' in x else x)
+
+# 전국 경계 정보를 가진 geo-json 파일 불러오기
+k_geo = '/content/skorea_municipalities_geo_simple.json'
+
+
+# 전국 지도 만들기
+k_map = folium.Map(location=[36.5502,126.982],
+                   tiles='Stamen Terrain', zoom_start=7)
+
+list(IT_df['근무지역'].value_counts().quantile([0, 0.25, 0.5, 0.75, 1]))
+# Choropleth 클래스로 단계구분도 표시하기
+folium.Choropleth(geo_data=k_geo,    # 지도 경계
+                 data = IT_df['근무지역'].value_counts(),      # 표시하려는 데이터
+                 columns = ['지역명','개수'],  # 열 지정
+                 fill_color='YlGnBu', fill_opacity=0.7, line_opacity=0.3,
+                 bins = list(IT_df['근무지역'].value_counts().quantile([0, 0.1, 0.15,0.2, 0.25,0.3, 0.35,0.4, 0.45, 0.5,0.6, 0.65,0.7, 0.75,0.8, 0.85,0.9, 0.9, 1])),
+                 key_on='feature.properties.name',
+                 ).add_to(k_map)
