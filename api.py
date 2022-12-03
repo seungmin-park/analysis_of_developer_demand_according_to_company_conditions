@@ -138,13 +138,16 @@ df_all.drop(['Unnamed: 0', 'Unnamed: 0.1', '임금형태'], axis=1, inplace=True
 
 workCode = pd.read_csv('/content/직종코드.csv')
 workCode = workCode.replace(r'^\s*$', np.nan, regex=True)
-workCode.dropna(thresh = 2, inplace=True)
+workCode.dropna(thresh=2, inplace=True)
 workCode.fillna(method='ffill', inplace=True)
 
 # 불필요한 열 삭제
-workCode.drop(['0'], axis =1 , inplace=True)
+workCode.drop(['0'], axis=1, inplace=True)
 
 # 채용 공고와 병합을 위한 columns 이름 변경
 workCode.columns = ['직종코드', '대분류', '중분류', '소분류']
 
 workCode.to_csv("new_직종코드.csv", mode='w', encoding='utf-8')
+
+# 채용 공고와 직종코드 정보 합치기
+merged = pd.merge(left=df_all, right=workCode, how='inner', on='직종코드')
