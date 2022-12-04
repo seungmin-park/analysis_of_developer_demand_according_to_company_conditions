@@ -114,31 +114,36 @@ def rangeCost(x):
     minYearCost = int(minMonthCost) * 12
     maxYearCost = int(maxMonthCost) * 12
 
-    yearCost = str(int((minYearCost + maxYearCost) / 2)) + "만원"
-    return yearCost
+    return int((minYearCost + maxYearCost) / 2)
 
 
 def convertFixMonthCost(x):
     x = x.replace('만원', '')
-    yearCost = str(int(x) * 12) + "만원"
-    return yearCost
+    return int(x) * 12
 
 
-def temp(x):
+def removePostfix(x):
+    if x.__contains__('~'):
+        return getAvg(x)
+    return int(x.replace('만원', ''))
+
+
+def getAvg(x):
     x = x.replace('만원', '')
     x = x.replace(' ', '')
     split = x.split('~')
 
-    return str(int(int(split[0]) + int(split[1]) / 2)) + '만원'
+    return int(int(split[0]) + int(split[1]) / 2)
 
 
 df_year_cost = df_all[df_all.임금형태 == '연봉']
-df_year_cost.급여 = df_year_cost.급여.apply(lambda x: temp(x) if x.__contains__('~') else x)
+df_year_cost.급여 = df_year_cost.급여.apply(removePostfix)
+
 df_month_cost = df_all[df_all.임금형태 == '월급']
 df_month_cost.급여 = df_month_cost.급여.apply(convertMonthCost)
 df_all = pd.concat((df_year_cost, df_month_cost), sort=False)
 
-df_all.drop(['Unnamed: 0', 'Unnamed: 0.1', '임금형태'], axis=1, inplace=True)
+df_all.drop(['Unnamed: 0', 'Unnamed: 0.1', 'Unnamed: 0.1.1', '임금형태'], axis=1, inplace=True)
 
 workCode = pd.read_csv('/content/직종코드.csv')
 workCode = workCode.replace(r'^\s*$', np.nan, regex=True)
