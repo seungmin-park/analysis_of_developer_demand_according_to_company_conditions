@@ -457,3 +457,6 @@ plt.show()
 
 # 상세 직군별 채요 공고수 구하기
 sns.histplot(data=IT_df, y='소분류')
+
+# 경력별 급여 분포도 구하기
+sns.violinplot(data=IT_df,y = '경력', x = '급여')
