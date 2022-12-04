@@ -421,17 +421,30 @@ IT_df.근무지역 = IT_df.근무지역.apply(lambda x: '종로구' if '종로�
 # 전국 경계 정보를 가진 geo-json 파일 불러오기
 k_geo = '/content/skorea_municipalities_geo_simple.json'
 
-
 # 전국 지도 만들기
-k_map = folium.Map(location=[36.5502,126.982],
+k_map = folium.Map(location=[36.5502, 126.982],
                    tiles='Stamen Terrain', zoom_start=7)
 
 list(IT_df['근무지역'].value_counts().quantile([0, 0.25, 0.5, 0.75, 1]))
 # Choropleth 클래스로 단계구분도 표시하기
-folium.Choropleth(geo_data=k_geo,    # 지도 경계
-                 data = IT_df['근무지역'].value_counts(),      # 표시하려는 데이터
-                 columns = ['지역명','개수'],  # 열 지정
-                 fill_color='YlGnBu', fill_opacity=0.7, line_opacity=0.3,
-                 bins = list(IT_df['근무지역'].value_counts().quantile([0, 0.1, 0.15,0.2, 0.25,0.3, 0.35,0.4, 0.45, 0.5,0.6, 0.65,0.7, 0.75,0.8, 0.85,0.9, 0.9, 1])),
-                 key_on='feature.properties.name',
-                 ).add_to(k_map)
+folium.Choropleth(geo_data=k_geo,  # 지도 경계
+                  data=IT_df['근무지역'].value_counts(),  # 표시하려는 데이터
+                  columns=['지역명', '개수'],  # 열 지정
+                  fill_color='YlGnBu', fill_opacity=0.7, line_opacity=0.3,
+                  bins=list(IT_df['근무지역'].value_counts().quantile(
+                      [0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.9,
+                       1])),
+                  key_on='feature.properties.name',
+                  ).add_to(k_map)
+
+# 경력별 퍼센트 구하기
+none = IT_df[IT_df.경력 == '관계없음'].경력.count()
+newcomer = IT_df[IT_df.경력 == '신입'].경력.count()
+career = IT_df[IT_df.경력 == '경력'].경력.count()
+
+ratio = [none, newcomer, career]
+labels = ['관계없음', '신입', '경력']
+explode = [0, 0, 0.1]
+plt.pie(ratio, labels=labels, shadow=True, explode=explode, autopct='%.1f%%', textprops={'fontsize': 15})
+
+plt.show()
