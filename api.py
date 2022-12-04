@@ -5,6 +5,7 @@ import requests
 import pandas as pd
 import folium
 import json
+import seaborn as sns
 import matplotlib.pyplot as plt
 from bs4 import BeautifulSoup
 
@@ -448,3 +449,6 @@ explode = [0, 0, 0.1]
 plt.pie(ratio, labels=labels, shadow=True, explode=explode, autopct='%.1f%%', textprops={'fontsize': 15})
 
 plt.show()
+
+# 상세 직군별 채요 공고수 구하기
+sns.histplot(data=IT_df, y='소분류')
