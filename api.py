@@ -459,4 +459,10 @@ plt.show()
 sns.histplot(data=IT_df, y='소분류')
 
 # 경력별 급여 분포도 구하기
-sns.violinplot(data=IT_df,y = '경력', x = '급여')
+sns.violinplot(data=IT_df, y='경력', x='급여')
+
+# 최소 학력별 채용 공고의 수 구하기
+sns.countplot(data=IT_df, x='최소학력')
+
+# 최소 학력별 채용 공고의 급여 분포도 구하기
+sns.violinplot(data=IT_df, y='최소학력', x='급여')
